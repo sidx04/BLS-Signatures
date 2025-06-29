@@ -1,0 +1,21 @@
+[package]
+name = "bls-sig"
+version = "0.1.0"
+edition = "2024"
+
+
+[dependencies]
+anyhow = "1.0.98"
+ark-bls12-381 = { version = "0.5.0", features = ["std"] }
+ark-ec = "0.5.0"
+ark-ff = "0.5.0"
+ark-std = "0.5.0"
+clap = { version = "4.5.40", features = ["derive"] }
+dirs = "6.0.0"
+hkdf = "0.12.4"
+sha2 = "0.10.9"
+thiserror = "2.0.12"
+
+[[bin]]
+name = "bls-sig"
+path = "src/main.rs"
