@@ -1,4 +1,7 @@
-use crate::bls::{KeyValidationError, PublicKey, Signature, SignatureError, hash_to_g2};
+use crate::{
+    core::{KeyValidationError, PublicKey, Signature, SignatureError},
+    util::hash_to_g2,
+};
 
 use ark_bls12_381::{Bls12_381, G1Affine};
 use ark_ec::{AffineRepr, pairing::Pairing};

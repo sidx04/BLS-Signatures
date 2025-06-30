@@ -1,12 +1,15 @@
-use anyhow::Context;
+use anyhow::Ok;
 use ark_bls12_381::{Fr, G1Projective};
 use ark_ec::{CurveGroup, PrimeGroup};
 use ark_ff::PrimeField;
 use hkdf::Hkdf;
 use sha2::Sha256;
-use std::{fs::OpenOptions, io::Write, os::unix::fs::OpenOptionsExt, path::PathBuf};
+use std::path::PathBuf;
 
-use crate::bls::{PublicKey, SecretKey};
+use crate::{
+    core::PublicKey,
+    util::{read_sk, write_sk},
+};
 
 pub fn keygen(ikm: &[u8], path: &PathBuf) -> anyhow::Result<()> {
     let salt = b"BLS-SIG-KEYGEN-SALT-";
@@ -25,31 +28,9 @@ pub fn keygen(ikm: &[u8], path: &PathBuf) -> anyhow::Result<()> {
     write_sk(sk, path)
 }
 
-pub fn sk_to_pk(sk: SecretKey) -> PublicKey {
+pub fn sk_to_pk(path: &PathBuf) -> anyhow::Result<PublicKey> {
+    let sk = read_sk(path)?;
     let pk_point = G1Projective::generator() * sk;
     let pk = pk_point.into_affine();
-
-    pk
-}
-
-fn write_sk(sk: SecretKey, path: &PathBuf) -> anyhow::Result<()> {
-    if let Some(parent) = path.parent() {
-        if !parent.exists() {
-            std::fs::create_dir_all(parent)
-                .with_context(|| format!("Failed to create directory: {}", parent.display()))?;
-        }
-    }
-
-    let mut file = OpenOptions::new()
-        .create(true)
-        .write(true)
-        .truncate(true)
-        .mode(0o600)
-        .open(path)
-        .with_context(|| format!("Failed to write to {}", path.display()))?;
-
-    file.write_all(sk.to_string().as_bytes())?;
-    println!("🔐 Secret key written to: {}", path.display());
-
-    Ok(())
+    Ok(pk)
 }
