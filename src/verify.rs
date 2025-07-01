@@ -38,6 +38,7 @@ pub fn core_verify(pk: &PublicKey, msg: &[u8], sig: &Signature) -> Result<(), Si
     let c2 = Bls12_381::pairing(G1Affine::generator(), sig);
 
     if c1 == c2 {
+        println!("Verification succesful!");
         Ok(())
     } else {
         Err(SignatureError::InvalidSignature)

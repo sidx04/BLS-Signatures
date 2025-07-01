@@ -1,4 +1,5 @@
 use anyhow::Context;
+use ark_serialize::{CanonicalDeserialize, CanonicalSerialize};
 use sha2::Sha256;
 use std::{
     fs::OpenOptions,
@@ -12,7 +13,7 @@ use ark_ec::hashing::{
     HashToCurve, HashToCurveError, curve_maps::wb::WBMap,
     map_to_curve_hasher::MapToCurveBasedHasher,
 };
-use ark_ff::{PrimeField, field_hashers::DefaultFieldHasher};
+use ark_ff::field_hashers::DefaultFieldHasher;
 
 use crate::core::{SecretKey, Signature};
 
@@ -32,7 +33,10 @@ pub fn write_sk(sk: SecretKey, path: &PathBuf) -> anyhow::Result<()> {
         .open(path)
         .with_context(|| format!("Failed to write to {}", path.display()))?;
 
-    file.write_all(sk.to_string().as_bytes())?;
+    let mut buf: Vec<u8> = Vec::new();
+    sk.serialize_compressed(&mut buf)?;
+
+    file.write_all(hex::encode(buf).as_bytes())?;
     println!("🔐 Secret key written to: {}", path.display());
 
     Ok(())
@@ -47,7 +51,8 @@ pub fn read_sk(path: &PathBuf) -> anyhow::Result<Fr> {
     let mut buf: Vec<u8> = Vec::new();
     file.read_to_end(&mut buf)?;
 
-    let sk = Fr::from_be_bytes_mod_order(&buf);
+    hex::decode(&mut buf)?;
+    let sk = Fr::deserialize_compressed(&*buf)?;
 
     Ok(sk)
 }

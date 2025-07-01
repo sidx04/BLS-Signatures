@@ -1,4 +1,4 @@
-use anyhow::Ok;
+use anyhow::{Context, Ok};
 use ark_bls12_381::{Fr, G1Projective};
 use ark_ec::{CurveGroup, PrimeGroup};
 use ark_ff::PrimeField;
@@ -29,7 +29,7 @@ pub fn keygen(ikm: &[u8], path: &PathBuf) -> anyhow::Result<()> {
 }
 
 pub fn sk_to_pk(path: &PathBuf) -> anyhow::Result<PublicKey> {
-    let sk = read_sk(path)?;
+    let sk = read_sk(path).with_context(|| "Failed to get secret key from file.")?;
     let pk_point = G1Projective::generator() * sk;
     let pk = pk_point.into_affine();
     Ok(pk)
