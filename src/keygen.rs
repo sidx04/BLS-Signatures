@@ -23,7 +23,7 @@ pub fn keygen(ikm: &[u8], path: &PathBuf) -> anyhow::Result<()> {
     let mut bytes = [0u8; 32];
     bytes.copy_from_slice(&okm[L - 32..]);
 
-    let sk = Fr::from_be_bytes_mod_order(&mut bytes);
+    let sk = Fr::from_be_bytes_mod_order(&bytes);
 
     write_sk(sk, path)
 }
