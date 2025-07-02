@@ -110,38 +110,38 @@ jobs:
           path: bls-sig-${{ github.ref_name }}-aarch64-linux-gnu.tar.gz
           retention-days: 1
 
-  build-windows-x86_64:
-    runs-on: windows-latest
+  # build-windows-x86_64:
+  #   runs-on: windows-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
+  #     - name: Install Rust toolchain
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: stable
+  #         override: true
 
-      - name: Build release binary (Windows x86_64)
+  #     - name: Build release binary (Windows x86_64)
 
-        run: cargo build --release
+  #       run: cargo build --release
 
-      - name: Package binary (Windows x86_64)
-        run: |
-          mkdir dist_windows_x86_64
+  #     - name: Package binary (Windows x86_64)
+  #       run: |
+  #         mkdir dist_windows_x86_64
 
-          cp target/release/bls-sig.exe dist_windows_x86_64/bls-sig.exe
-          cp README.md dist_windows_x86_64/
+  #         cp target/release/bls-sig.exe dist_windows_x86_64/bls-sig.exe
+  #         cp README.md dist_windows_x86_64/
 
-          7z a bls-sig-${{ github.ref_name }}-x86_64-windows.zip ./dist_windows_x86_64/*
+  #         7z a bls-sig-${{ github.ref_name }}-x86_64-windows.zip ./dist_windows_x86_64/*
 
-      - name: Upload build artifact (Windows x86_64)
-        uses: actions/upload-artifact@v4
-        with:
-          name: bls-sig-windows-x86_64-binary
-          path: bls-sig-${{ github.ref_name }}-x86_64-windows.zip
-          retention-days: 1
+  #     - name: Upload build artifact (Windows x86_64)
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: bls-sig-windows-x86_64-binary
+  #         path: bls-sig-${{ github.ref_name }}-x86_64-windows.zip
+  #         retention-days: 1
 
   release:
     runs-on: ubuntu-latest
