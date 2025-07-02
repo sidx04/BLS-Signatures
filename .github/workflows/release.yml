@@ -1,0 +1,187 @@
+name: Build and Upload Artifact
+
+on:
+  push: tags
+    - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux-x86_64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build release binary (Linux x86_64)
+        run: cargo build --release
+
+      - name: Package binary (Linux x86_64)
+        run: |
+          mkdir dist_linux_x86_64
+          cp target/release/bls-sig dist_linux_x86_64/bls-sig
+          cp README.md dist_linux_x86_64/
+          tar -czvf bls-sig-${{ github.ref_name }}-x86_64-linux.tar.gz -C dist_linux_x86_64 .
+
+      - name: Upload build artifact (Linux x86_64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bls-sig-linux-x86_64-binary
+          path: bls-sig-${{ github.ref_name }}-x86_64-linux.tar.gz
+          retention-days: 1
+
+  build-macos-x86_64:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build release binary (macOS x86_64)
+        run: cargo build --release
+
+      - name: Package binary (macOS x86_64)
+        run: |
+          mkdir dist_macos_x86_64
+          cp target/release/bls-sig dist_macos_x86_64/bls-sig
+          cp README.md dist_macos_x86_64/
+          tar -czvf bls-sig-${{ github.ref_name }}-x86_64-darwin.tar.gz -C dist_macos_x86_64 .
+
+      - name: Upload build artifact (macOS x86_64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bls-sig-macos-x86_64-binary
+          path: bls-sig-${{ github.ref_name }}-x86_64-darwin.tar.gz
+          retention-days: 1
+
+  build-linux-aarch64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: aarch64-unknown-linux-gnu
+          override: true
+
+      - name: Install AARCH64 GNU toolchain
+        run: sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Build release binary (Linux AARCH64 GNU)
+        run: cargo build --release --target aarch64-unknown-linux-gnu
+
+      - name: Package binary (Linux AARCH64 GNU)
+        run: |
+          mkdir dist_linux_aarch64
+
+          cp target/aarch64-unknown-linux-gnu/release/bls-sig dist_linux_aarch64/bls-sig
+          cp README.md dist_linux_aarch64/
+          tar -czvf bls-sig-${{ github.ref_name }}-aarch64-linux-gnu.tar.gz -C dist_linux_aarch64 .
+
+      - name: Upload build artifact (Linux AARCH64 GNU)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bls-sig-linux-aarch64-binary
+          path: bls-sig-${{ github.ref_name }}-aarch64-linux-gnu.tar.gz
+          retention-days: 1
+
+  build-windows-x86_64:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build release binary (Windows x86_64)
+
+        run: cargo build --release
+
+      - name: Package binary (Windows x86_64)
+        run: |
+          mkdir dist_windows_x86_64
+
+          cp target/release/bls-sig.exe dist_windows_x86_64/bls-sig.exe
+          cp README.md dist_windows_x86_64/
+
+          7z a bls-sig-${{ github.ref_name }}-x86_64-windows.zip ./dist_windows_x86_64/*
+
+      - name: Upload build artifact (Windows x86_64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bls-sig-windows-x86_64-binary
+          path: bls-sig-${{ github.ref_name }}-x86_64-windows.zip
+          retention-days: 1
+
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      [
+        build-linux-x86_64,
+        build-macos-x86_64,
+        build-linux-aarch64,
+        build-windows-x86_64,
+      ]
+
+    steps:
+      - name: Download Linux x86_64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: bls-sig-linux-x86_64-binary
+          path: ./artifacts/linux_x86_64
+
+      - name: Download macOS x86_64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: bls-sig-macos-x86_64-binary
+          path: ./artifacts/macos_x86_64
+
+      - name: Download Linux AARCH64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: bls-sig-linux-aarch64-binary
+          path: ./artifacts/linux_aarch64
+
+      - name: Download Windows x86_64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: bls-sig-windows-x86_64-binary
+          path: ./artifacts/windows_x86_64
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            Automated release for version ${{ github.ref_name }}.
+
+            Check the [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for full details.
+          files: |
+            ./artifacts/linux_x86_64/bls-sig-${{ github.ref_name }}-x86_64-linux.tar.gz
+            ./artifacts/macos_x86_64/bls-sig-${{ github.ref_name }}-x86_64-darwin.tar.gz
+            ./artifacts/linux_aarch64/bls-sig-${{ github.ref_name }}-aarch64-linux-gnu.tar.gz
+            ./artifacts/windows_x86_64/bls-sig-${{ github.ref_name }}-x86_64-windows.zip
