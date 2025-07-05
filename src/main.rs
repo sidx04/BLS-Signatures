@@ -1,8 +1,8 @@
 use anyhow::Context;
 use ark_bls12_381::{G1Affine, G2Affine};
 use ark_serialize::{CanonicalDeserialize, CanonicalSerialize};
-use bls_sig::core::{core_sign, core_verify, keygen, sk_to_pk};
-use bls_sig::interface::{Cli, Commands};
+use bls_sig_cli::core::{core_sign, core_verify, keygen, sk_to_pk};
+use bls_sig_cli::interface::{Cli, Commands};
 use clap::Parser;
 use std::path::{Path, PathBuf};
 
