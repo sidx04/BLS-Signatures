@@ -230,7 +230,7 @@ dependencies = [
 
 [[package]]
 name = "bls-sig-cli"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "anyhow",
  "ark-bls12-381",

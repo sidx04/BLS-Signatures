@@ -1,4 +1,4 @@
-# BLS Signatures CLI (`bls-sig`)
+# BLS Signatures CLI (`bls-sig-cli`)
 
 A proof-of-concept, command-line tool for BLS signature operations, providing functionalities for key generation, public key derivation, message signing, and signature verification.
 
@@ -27,7 +27,7 @@ A proof-of-concept, command-line tool for BLS signature operations, providing fu
 
 ## Overview
 
-**`bls-sig`** is a versatile command-line interface designed to facilitate various operations related to BLS (Boneh-Lynn-Shacham) signatures. It leverages robust cryptographic libraries to provide a secure and easy-to-use tool for generating keys, signing messages, and verifying signatures.
+**`bls-sig-cli`** is a versatile command-line interface designed to facilitate various operations related to BLS (Boneh-Lynn-Shacham) signatures. It leverages robust cryptographic libraries to provide a secure and easy-to-use tool for generating keys, signing messages, and verifying signatures.
 
 ---
 
@@ -45,10 +45,10 @@ A proof-of-concept, command-line tool for BLS signature operations, providing fu
 
 ### From Crates.io (Recommended)
 
-To install `bls-sig` directly from [Crates.io](https://crates.io/crates/bls-sig), ensure you have **Rust** and **Cargo** installed, then run:
+To install `bls-sig-cli` directly from [Crates.io](https://crates.io/crates/bls-sig-cli), ensure you have **Rust** and **Cargo** installed, then run:
 
 ```sh
-cargo install bls-sig
+cargo install bls-sig-cli
 ```
 
 ### From Source
@@ -56,29 +56,29 @@ cargo install bls-sig
 If you prefer to build from source, follow these steps:
 
 ```sh
-git clone https://github.com/sidx04/bls-sig.git
-cd bls-sig
+git clone https://github.com/sidx04/bls-sig-cli.git
+cd bls-sig-cli
 cargo build --release
 ```
 
-The executable will be located at `target/release/bls-sig`. You can then move it to a directory in your `PATH`:
+The executable will be located at `target/release/bls-sig-cli`. You can then move it to a directory in your `PATH`:
 
 ```sh
-cp target/release/bls-sig ~/.local/bin/ # or any other specified directory
+cp target/release/bls-sig-cli ~/.local/bin/ # or any other specified directory
 ```
 
 ---
 
 ## Usage
 
-The `bls-sig` CLI provides several subcommands, each corresponding to a specific BLS signature operation.
+The `bls-sig-cli` CLI provides several subcommands, each corresponding to a specific BLS signature operation.
 
 ### Global Options
 
 ```text
 BLS Signatures CLI
 
-Usage: bls-sig <COMMAND>
+Usage: bls-sig-cli <COMMAND>
 ```
 
 ### Commands
@@ -88,7 +88,7 @@ Usage: bls-sig <COMMAND>
 Generate a new BLS secret key.
 
 ```text
-Usage: bls-sig keygen [OPTIONS]
+Usage: bls-sig-cli keygen [OPTIONS]
 ```
 
 Options:
@@ -102,7 +102,7 @@ Options:
 Derive and print the public key from a secret key file.
 
 ```text
-Usage: bls-sig pubkey [OPTIONS]
+Usage: bls-sig-cli pubkey [OPTIONS]
 ```
 
 Options:
@@ -115,7 +115,7 @@ Options:
 Sign a message using a BLS secret key. A message can be any file or any arbitrary string of characters.
 
 ```text
-Usage: bls-sig sign [OPTIONS] --msg <MSG>
+Usage: bls-sig-cli sign [OPTIONS] --msg <MSG>
 ```
 
 Options:
@@ -129,7 +129,7 @@ Options:
 Verify a BLS signature.
 
 ```text
-Usage: bls-sig verify --pk <PK> --msg <MSG> --sig <SIG>
+Usage: bls-sig-cli verify --pk <PK> --msg <MSG> --sig <SIG>
 ```
 
 Options:
@@ -146,31 +146,31 @@ Options:
 Generate a random secret key and save to a file:
 
 ```sh
-bls-sig keygen --out my_secret.key
+bls-sig-cli keygen --out my_secret.key
 ```
 
 Generate a secret key from IKM:
 
 ```sh
-bls-sig keygen --ikm "my super secret string"
+bls-sig-cli keygen --ikm "MY_SUPER_SECRET_STRING"
 ```
 
 Derive a public key:
 
 ```sh
-bls-sig pubkey --path my_secret.key
+bls-sig-cli pubkey --path my_secret.key
 ```
 
 Sign a message:
 
 ```sh
-bls-sig sign --path my_secret.key --msg "Hello, world!"
+bls-sig-cli sign --path my_secret.key --msg "Hello, world!"
 ```
 
 Verify a signature:
 
 ```sh
-bls-sig verify --pk PK_HEX --msg "MSG_STRING" --sig SIG_HEX
+bls-sig-cli verify --pk PK_HEX --msg "MSG_STRING" --sig SIG_HEX
 ```
 
 > Replace `PK_HEX`, `MSG_STRING`, and `SIG_HEX` with actual values.
@@ -179,7 +179,7 @@ bls-sig verify --pk PK_HEX --msg "MSG_STRING" --sig SIG_HEX
 
 ## Contributing
 
-Contributions are welcome! Feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/sidx04/bls-sig).
+Contributions are welcome! Feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/sidx04/bls-sig-cli).
 
 ---
 
